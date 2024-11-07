@@ -69,3 +69,19 @@ etk_extract_sector input=<NEW_PATH_TO_DATA> output=<PATH_TO_OUTPUT> show_result_
 The `input` argument must be a folder, file or list of files. Files are expected to be in nifti format.
 By default, outputs files are send to `./output`.
 
+## Implementation details
+### Ultrasound sector extraction
+
+The sector extraction tool is based on RANSAC. RANSAC (Random sample consesus) is an iterative algorithm 
+to estimate parameters for a mathematical model, in this case lines and circles.
+Based on points extracted from the edge of the ultrasound cone, two line models and one circle model are fit, 
+then the resulting mask is reconstructed based on their intersections.
+
+In order to improve performance, a nn-UNet model was trained (using the ASCENT project included as a submodule). 
+This model predicts a cone for the input sequence of images. 
+This cone is used to obtain an initial version of the sector mask.
+Since the model has no enforced prior about the sector's shape, there can be inconsistencies in its shape.
+RANSAC is therefore applied to the edge points of the prediction to obtain a reliable output mask.
+We found that using the neural network before RANSAC rather than RANSAC alone (on variance metrics of input sequence) 
+made for a much more robust method.
+
