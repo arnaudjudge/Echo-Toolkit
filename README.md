@@ -1,1 +1,71 @@
-Please cite RL4Seg in exchange for the use of this project
+# Echo-Toolkit
+
+Code repository for an echocardiography medical imaging toolkit.
+Functionalities also extend to general ultrasound imaging.
+
+We ask that you cite the `Domain Adaptation of Echocardiography Segmentation Via Reinforcement Learning` paper in exchange for the use of this project:
+
+```
+@InProceedings{Jud_Domain_MICCAI2024,
+        author = { Judge, Arnaud and Judge, Thierry and Duchateau, Nicolas and Sandler, Roman A. and Sokol, Joseph Z. and Bernard, Olivier and Jodoin, Pierre-Marc},
+        title = { { Domain Adaptation of Echocardiography Segmentation Via Reinforcement Learning } },
+        booktitle = {proceedings of Medical Image Computing and Computer Assisted Intervention -- MICCAI 2024},
+        year = {2024},
+        publisher = {Springer Nature Switzerland},
+        volume = {LNCS 15009},
+        month = {October},
+        page = {pending}
+}
+```
+
+## Install
+
+1. Download the repository:
+   ```bash
+   # clone project
+   git clone --recurse-submodules https://github.com/arnaudjudge/Echo-Toolkit.git
+   cd Echo-Toolkit
+   ```
+2. Create a virtual environment (Conda is strongly recommended):
+   ```bash
+   # create conda environment
+   conda create -n echotk python=3.10
+   conda activate echotk
+   ```
+3. Install [PyTorch](https://pytorch.org/get-started/locally/) according to instructions. Grab the one with GPU for faster training:
+   ```bash
+   # example for linux or Windows
+   conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
+   ```
+4. Install the project in editable mode and its dependencies, do the same for the ASCENT submodule:
+   ```bash
+   pip install -e .
+   cd ASCENT
+   pip install -e .
+   cd ..
+   ```
+
+## Usage
+### Ultrasound sector extraction
+
+Ultrasound sector extraction removes all annotations, text, ECG trace and unnecessary information from the images, 
+keeping only the region of interest, the *cone* or *sector*.
+
+This project contains a command line script to create and apply a mask to remove all such annotations. 
+To run it, simply use the `etk_extract_sector` command.
+
+By default, it will process input data from the `./data/examples/` folder at the project's root. 
+Example images and sequences are included already.
+However, many options are available through hydra (https://hydra.cc/docs/intro/) CLI override syntax or 
+through modification/addition of config files. 
+The main config files with all available default arguments is `./echotk/config/sector_extract.yaml`.
+
+Examples of command line usage:
+```bash
+etk_extract_sector input=<NEW_PATH_TO_DATA>
+etk_extract_sector input=<NEW_PATH_TO_DATA> output=<PATH_TO_OUTPUT> show_result_gifs=True save_metrics=True
+```
+
+The `input` argument must be a folder, file or list of files. Files are expected to be in nifti format.
+By default, outputs files are send to `./output`.
+
