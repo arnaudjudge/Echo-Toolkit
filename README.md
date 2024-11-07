@@ -18,6 +18,9 @@ We ask that you cite the `Domain Adaptation of Echocardiography Segmentation Via
 }
 ```
 
+Current functionalities:
+- Ultrasound sector extraction tool
+
 ## Install
 
 1. Download the repository:
