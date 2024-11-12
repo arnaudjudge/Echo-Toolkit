@@ -23,7 +23,7 @@ Current functionalities:
 
 ### Usage notes
 Inference time may be quite long if using an older GPU. 
-Included test examples require 2-5 seconds for predictions (using roughly 7GB of VRAM), using a NVIDIA RTX3090 GPU.
+Included test examples for sector extraction require 2-5 seconds per prediction (using roughly 7GB of VRAM), using a NVIDIA RTX3090 GPU.
 
 ## Install
 
