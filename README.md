@@ -21,6 +21,10 @@ We ask that you cite the `Domain Adaptation of Echocardiography Segmentation Via
 Current functionalities:
 - Ultrasound sector extraction tool
 
+### Usage notes
+Inference time may be quite long if using an older GPU. 
+Included test examples require 2-5 seconds for predictions (using roughly 7GB of VRAM), using a NVIDIA RTX3090 GPU.
+
 ## Install
 
 1. Download the repository:
