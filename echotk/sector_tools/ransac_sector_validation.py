@@ -41,7 +41,7 @@ def measure_signal_lost(img, mask, plot=False):
     if plot:
         plt.figure()
         plt.title("Signal lost: masked image areas with high variance")
-        plt.imshow(img[:, :, 5].T)
+        plt.imshow(img[:, :, 0].T)
 
         plt.figure()
         plt.title("Signal lost: high variance areas")
@@ -90,7 +90,7 @@ def measure_remaining_annotations(img, mask, plot=False):
 
         plt.figure()
         plt.title("Remaining annotations: low variance areas within mask")
-        plt.imshow(img[:, :, 5].T)
+        plt.imshow(img[:, :, 0].T)
         plt.imshow(e.T, alpha=0.7, cmap='jet')
         plt.show()
 

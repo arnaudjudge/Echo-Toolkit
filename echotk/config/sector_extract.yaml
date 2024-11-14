@@ -15,6 +15,7 @@ hydra:
 input: ${oc.env:PROJECT_ROOT}/data/examples/
 output: ${oc.env:PROJECT_ROOT}/output/
 
+save_sector_mask: True
 save_metrics: False
 
 # checkpoint path for nnunet model

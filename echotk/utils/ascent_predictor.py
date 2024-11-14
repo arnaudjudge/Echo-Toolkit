@@ -7,8 +7,8 @@ from lightning import LightningModule
 
 import torch
 from ASCENT.ascent.predict import AscentPredictor
-from ASCENT.ascent.utils.file_and_folder_operations import load_pickle, save_pickle
-from ASCENT.ascent.utils.transforms import Preprocessd
+from ASCENT.ascent.utils.file_and_folder_operations import load_pickle
+from ASCENT.ascent.utils.transforms import Preprocessd, Convert2Dto3DIfNeeded
 from monai.data import CacheDataset, DataLoader, ArrayDataset, MetaTensor
 from monai import transforms
 from lightning import Trainer
@@ -61,7 +61,12 @@ class CustomASCENTPredictor:
         for seq in seq_paths:
             datalist.append({'image': seq})
 
-        dataset = CacheDataset(data=datalist, transform=self.data_transforms, cache_rate=1.0)
+        # add transform to convert to 3d if image is 2d, must be before preprocessing (at index 2)
+        transf = [t for t in self.data_transforms.transforms]
+        transf.insert(2, Convert2Dto3DIfNeeded(keys='image', num_channel=1, num_time=4))
+        transf = transforms.compose.Compose(transf)
+
+        dataset = CacheDataset(data=datalist, transform=transf, cache_rate=1.0)
 
         dataloader = DataLoader(
             dataset=dataset,
@@ -82,7 +87,9 @@ class CustomASCENTPredictor:
                                    do_resample=self.dataset_properties['do_resample'],
                                    do_normalize=self.dataset_properties['do_normalize'],
                                    modalities=self.dataset_properties['modalities'])
-        tforms = transforms.compose.Compose([preprocessed, ToTensord(keys="image", track_meta=True)])
+        tforms = transforms.compose.Compose([Convert2Dto3DIfNeeded(keys='image', num_channel=1, num_time=4),
+                                             preprocessed,
+                                             ToTensord(keys="image", track_meta=True)])
         dataset = ArrayDataset(img=numpy_arr, img_transform=tforms)
 
         dataloader = DataLoader(

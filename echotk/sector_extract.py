@@ -44,9 +44,15 @@ def extract_sector(cfg: DictConfig):
 
     # zip with filenames
     for p, v, f in zip(pred, vol, filenames):
+        # if image 2d, pred has dimensions added to it
+        if len(v[0].shape) < 3:
+            img_3d = np.repeat(v[0].copy()[..., None], p.shape[-1], axis=-1)
+        else:
+            img_3d = v[0].copy()
+
         # compute final mask with ransac and return metrics used for validity
         ransac_mask, diff, ratio, annot, sig, ransac_param_dict = ransac_sector_w_metrics(p.astype(np.uint8),
-                                                                                          img=v[0].copy(),
+                                                                                          img=img_3d,
                                                                                           plot=cfg.show_intermediate_plots)
 
         # Check if ransac mask passes metrics
@@ -77,6 +83,10 @@ def extract_sector(cfg: DictConfig):
             'annotations_remain': annot,
         }
 
+        # if 2D image, mask has been extented on last dimension
+        if len(v[0].shape) < 3:
+            ransac_mask = ransac_mask[..., 0]  # mask is same on all frames
+
         # appy mask and normalisation
         masked_image = v[0].copy()
         masked_image[~ransac_mask] = 0
@@ -85,12 +95,23 @@ def extract_sector(cfg: DictConfig):
 
         if cfg.show_result_gifs:
             p_gif = show_gif(p.transpose((2, 1, 0)), f'{f_name}: Initial nn-UNet prediction')
-            im_gif = show_gif(v[0].transpose((2, 1, 0)), f'{f_name}: Original input image')
-            m_gif = show_gif(masked_image.transpose((2, 1, 0)), f'{f_name}: Masked output image')
+            if len(v[0].shape) < 3:
+                plt.figure()
+                plt.imshow(masked_image.transpose((1, 0)))
+                plt.title(f'{f_name}: Masked output image')
+
+                plt.figure()
+                plt.imshow(v[0].transpose((1, 0)))
+                plt.title(f'{f_name}: Original input image')
+            else:
+                im_gif = show_gif(img_3d.transpose((2, 1, 0)), f'{f_name}: Original input image')
+                m_gif = show_gif(masked_image.transpose((2, 1, 0)), f'{f_name}: Masked output image')
             plt.show()
 
         # save mask and metrics dict (if wanted)
         save_nifti_file(f"{out_path}/{f_name}.nii.gz", masked_image, v[1], v[2])
+        if cfg.save_sector_mask:
+            save_nifti_file(f"{out_path}/{f_name}_sector_mask.nii.gz", ransac_mask, v[1], v[2])
         if cfg.save_metrics:
             with open(f"{out_path}/{f_name}_metrics.json", "w") as outfile:
                 json.dump(metrics, outfile)
