@@ -22,8 +22,8 @@ Current functionalities:
 - Ultrasound sector extraction tool
 
 ### Usage notes
-Inference time may be quite long if using an older GPU. 
-Included test examples for sector extraction require 2-5 seconds per prediction (using roughly 7GB of VRAM), using a NVIDIA RTX3090 GPU.
+Inference time may be quite long if using an older GPU and long input sequences. 
+Included test examples (which are small) for sector extraction require up to 2-3 seconds per prediction (using roughly 7GB of VRAM), using a NVIDIA RTX3090 GPU.
 
 ## Install
 
