@@ -52,7 +52,7 @@ def extract_sector(cfg: DictConfig):
 
         # compute final mask with ransac and return metrics used for validity
         ransac_mask, diff, ratio, annot, sig, ransac_param_dict = ransac_sector_w_metrics(p.astype(np.uint8),
-                                                                                          img=img_3d,
+                                                                                          img=img_3d.copy(),
                                                                                           plot=cfg.show_intermediate_plots)
 
         # Check if ransac mask passes metrics
