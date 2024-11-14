@@ -58,11 +58,13 @@ Included test examples for sector extraction require 2-5 seconds per prediction 
 Ultrasound sector extraction removes all annotations, text, ECG trace and unnecessary information from the images, 
 keeping only the region of interest, the *cone* or *sector*.
 
+<img src="./assets/a4c.gif" width="25%"/> --> <img src="./assets/a4c_masked.gif" width="25%"/>
+
 This project contains a command line script to create and apply a mask to remove all such annotations. 
 To run it, simply use the `etk_extract_sector` command.
 
 By default, it will process input data from the `./data/examples/` folder at the project's root. 
-Example images and sequences are included already.
+Example images and sequences are included already [^1].
 However, many options are available through hydra (https://hydra.cc/docs/intro/) CLI override syntax or 
 through modification/addition of config files. 
 The main config files with all available default arguments is `./echotk/config/sector_extract.yaml`.
@@ -92,3 +94,4 @@ RANSAC is therefore applied to the edge points of the prediction to obtain a rel
 We found that using the neural network before RANSAC rather than RANSAC alone (on variance metrics of input sequence) 
 made for a much more robust method.
 
+[^1] Images originally from Wikimedia Commons, available under Creative Commons License at https://commons.wikimedia.org/w/index.php?curid=25498405.
